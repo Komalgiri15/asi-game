@@ -55,7 +55,7 @@ export function SpotMissingQuiz({ challenge, onComplete }: SpotMissingQuizProps)
       <p className="challenge-instruction">
         Click all issues you spot ({challenge.requiredCount} to find):
       </p>
-      <div className="chip-grid chip-grid--compact">
+      <div className="chip-grid spot-missing-grid">
         {challenge.options.map((opt) => (
           <button
             key={opt.id}

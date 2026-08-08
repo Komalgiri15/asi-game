@@ -17,7 +17,7 @@ export function ChallengeScreen() {
         >
           <span className="section-label">{module?.subtitle}</span>
           <h2 className="exercise-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Radar size={28} color="var(--teal-primary)" /> Operative Assessment
+            <Radar size={22} color="var(--teal-primary)" /> Operative Assessment
           </h2>
         </motion.div>
         

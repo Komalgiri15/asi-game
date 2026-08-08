@@ -952,9 +952,10 @@ html, body, #root {
 }
 
 /* ── Exercise / Challenge ── */
-.exercise-screen { padding: 16px 32px 18px; }
-.exercise-header { margin-bottom: 12px; flex-shrink: 0; }
-.exercise-title { font-size: var(--text-xl); font-weight: 600; color: var(--grey-dark); margin-top: 2px; }
+.exercise-screen { padding: 12px 28px 14px; }
+.exercise-header { margin-bottom: 6px; flex-shrink: 0; }
+.exercise-title { font-size: var(--text-lg); font-weight: 600; color: var(--grey-dark); margin-top: 0; }
+.exercise-screen .section-label { margin-bottom: 4px; }
 
 .challenge-layout {
   flex: 1;
@@ -1162,9 +1163,52 @@ html, body, #root {
 /* Chips */
 .chip-grid {
   display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
-  flex: 1; min-height: 0; align-content: start; overflow: hidden;
+  flex: 1; min-height: 0; align-content: start; overflow-y: auto;
 }
 .chip-grid--compact { grid-template-columns: 1fr 1fr 1fr; }
+
+/* Spot-missing (Level 4) — compact header, 2-col grid so all options fit */
+.spot-missing .challenge-question {
+  font-size: var(--text-lg);
+  margin-bottom: 8px;
+  line-height: 1.25;
+}
+
+.spot-missing .sample-output {
+  padding: 10px 14px;
+  margin-bottom: 8px;
+}
+
+.spot-missing .sample-text {
+  font-size: var(--text-base);
+  line-height: 1.4;
+  margin-top: 6px;
+}
+
+.spot-missing .challenge-instruction {
+  font-size: var(--text-base);
+  margin-bottom: 10px;
+}
+
+.spot-missing-grid {
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  align-content: start;
+}
+
+.spot-missing .chip-option {
+  font-size: var(--text-sm);
+  padding: 12px 14px;
+  min-height: 0;
+  line-height: 1.35;
+}
+
+.spot-missing .challenge-actions {
+  padding-top: 10px;
+}
 
 .chip-option {
   display: flex; align-items: flex-start; gap: 10px; text-align: left;
@@ -1202,14 +1246,17 @@ html, body, #root {
 .prompt-built, .prompt-pool {
   background: var(--teal-pale); border: 1px solid var(--teal-light);
   border-radius: var(--radius); padding: 12px; overflow: hidden;
-  display: flex; flex-direction: column;
+  display: flex; flex-direction: column; min-height: 0;
 }
 .prompt-built-label, .prompt-pool-label {
   font-size: var(--text-xs); font-weight: 700; text-transform: uppercase;
   letter-spacing: 0.06em; color: var(--teal-primary); margin-bottom: 8px; flex-shrink: 0;
 }
-.prompt-empty { font-size: var(--text-sm); color: var(--grey-mid); font-style: italic; }
-.prompt-steps { list-style: none; overflow: hidden; }
+.prompt-empty { font-size: var(--text-sm); color: var(--grey-mid); font-style: italic; flex-shrink: 0; }
+.prompt-steps {
+  list-style: none; flex: 1; min-height: 0; overflow-y: auto;
+  margin: 0; padding: 0;
+}
 .prompt-steps li {
   font-size: var(--text-base); color: var(--grey-dark); line-height: 1.45;
   padding: 8px 0 8px 28px; position: relative;
@@ -1222,9 +1269,12 @@ html, body, #root {
   font-size: 10px; font-weight: 700;
   display: flex; align-items: center; justify-content: center;
 }
-.prompt-built ol { counter-reset: step; }
+.prompt-built ol { counter-reset: step; flex: 1; min-height: 0; display: flex; flex-direction: column; }
 
-.piece-grid { display: flex; flex-direction: column; gap: 6px; overflow: hidden; }
+.piece-grid {
+  display: flex; flex-direction: column; gap: 6px;
+  flex: 1; min-height: 0; overflow-y: auto;
+}
 .prompt-piece {
   text-align: left; padding: 12px 14px; min-height: 52px; background: var(--white);
   border: 1px solid var(--grey-pale); border-radius: var(--radius);
