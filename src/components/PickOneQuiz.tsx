@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FeedbackBanner, ActionButton } from './AppFrame';
 import { PickOneChallenge } from '../types/game';
+import { useAutoVoiceover } from '../hooks/useVoiceover';
 
 interface PickOneQuizProps {
   challenge: PickOneChallenge;
@@ -12,11 +13,13 @@ export function PickOneQuiz({ challenge, onComplete }: PickOneQuizProps) {
   const [selected, setSelected] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
 
+  useAutoVoiceover(challenge.question);
+
   const handleSubmit = () => {
     if (!selected || submitted) return;
     setSubmitted(true);
     const option = challenge.options.find((o) => o.id === selected);
-    const points = option?.correct ? challenge.points : Math.floor(challenge.points * 0.25);
+    const points = option?.correct ? challenge.points : 0;
     setTimeout(() => onComplete(points), 1200);
   };
 

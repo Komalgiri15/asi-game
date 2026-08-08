@@ -44,8 +44,8 @@ export const COMPETENCIES: Record<string, Competency> = {
 export const MODULES: Module[] = [
   {
     id: 1,
-    title: 'Evaluating Prompt Quality',
-    subtitle: 'Module 1 — Generic vs. structured prompting',
+    title: 'Prompt Bootcamp',
+    subtitle: 'Level 1 — Clearance: Rookie Operative',
     briefing:
       'An M&A deal team requires a Unilever PLC profile for an investment committee. A generic AFA prompt may produce a high-level overview, but often lacks the depth, sourcing, and structure required for professional due diligence.',
     tip: 'Compare the reference output against investment committee standards before selecting your response.',
@@ -67,8 +67,8 @@ export const MODULES: Module[] = [
   },
   {
     id: 2,
-    title: 'Defining Research Purpose',
-    subtitle: 'Module 2 — Audience and objective',
+    title: 'Mission Objective',
+    subtitle: 'Level 2 — Target Identification & Objective',
     briefing:
       'AFA delivers more relevant output when the profile purpose is explicit — intended audience, decisions supported, and analytical focus areas should be defined upfront.',
     tip: 'Start with purpose, not just the company name. Specify investment committee context, financial performance, risks, and competitive positioning.',
@@ -77,8 +77,8 @@ export const MODULES: Module[] = [
   },
   {
     id: 3,
-    title: 'Scoping Sources & Parameters',
-    subtitle: 'Module 3 — Research boundaries',
+    title: 'Data Gathering',
+    subtitle: 'Level 3 — Intelligence Boundaries',
     briefing:
       'Reliable profiles require clearly defined scope: reporting period, geographic coverage, currency, and prioritized primary sources such as filings, earnings materials, and investor presentations.',
     tip: 'Instruct AFA to use annual reports, regulatory filings, earnings transcripts, and the company website. Specify USD presentation and an "as of" date.',
@@ -87,8 +87,8 @@ export const MODULES: Module[] = [
   },
   {
     id: 4,
-    title: 'Requiring Evidence & Facts',
-    subtitle: 'Module 4 — Facts vs. interpretation',
+    title: 'Fact Checker',
+    subtitle: 'Level 4 — Verifying Intel vs. Speculation',
     briefing:
       'Investment committees require fact-based analysis. Key figures need reporting periods, sources, and clear separation between reported data, estimates, and analyst interpretation.',
     tip: 'Instruct AFA to provide reporting period and source for each key figure, and flag conflicting or unavailable information.',
@@ -97,8 +97,8 @@ export const MODULES: Module[] = [
   },
   {
     id: 5,
-    title: 'Constructing the Final Prompt',
-    subtitle: 'Module 5 — Unilever PLC case study',
+    title: 'The Master Plan',
+    subtitle: 'Level 5 — Operation: Unilever PLC',
     briefing:
       'Review the improved one-pager produced from a structured prompt. Then assemble the prompt components in the correct sequence for an M&A investment committee deliverable.',
     tip: 'Include audience, sources, USD figures, four quadrants, source links in a supporting document, and instructions to separate facts from interpretation.',
@@ -120,8 +120,8 @@ export const MODULES: Module[] = [
   },
   {
     id: 6,
-    title: 'Validating AI-Generated Output',
-    subtitle: 'Module 6 — Pre-submission review',
+    title: 'Final Validation',
+    subtitle: 'Level 6 — Pre-Deployment Clearance',
     briefing:
       'A well-written profile is not necessarily a well-validated one. Before use, verify accuracy against primary sources and ensure balanced, evidence-backed analysis.',
     tip: 'Validate financial figures, reporting periods, material news relevance, and unsupported claims before submitting any deliverable.',

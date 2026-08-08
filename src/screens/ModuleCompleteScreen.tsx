@@ -46,7 +46,7 @@ export function ModuleCompleteScreen() {
             <motion.div variants={scaleVariants} style={{ marginBottom: '16px', display: 'flex', justifyContent: 'center' }}>
               <Trophy size={64} color="var(--coral-primary)" />
             </motion.div>
-            <motion.h2 className="complete-title" variants={itemVariants}>Module Complete</motion.h2>
+            <motion.h2 className="complete-title" variants={itemVariants}>Level Cleared</motion.h2>
             <motion.p className="complete-subtitle" variants={itemVariants}>{module.title}</motion.p>
           </div>
 
@@ -55,7 +55,7 @@ export function ModuleCompleteScreen() {
               <span className="competency-earned-code">{module.competency.code}</span>
               <div>
                 <span className="competency-earned-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <Star size={14} color="var(--teal-bright)" /> Competency recorded
+                  <Star size={14} color="var(--teal-bright)" /> Operative skill unlocked
                 </span>
                 <strong>{module.competency.name}</strong>
                 <p>{module.competency.description}</p>
@@ -66,15 +66,15 @@ export function ModuleCompleteScreen() {
           <div className="complete-metrics">
             <motion.div className="metric-card" variants={itemVariants}>
               <span className="metric-value">{score}</span>
-              <span className="metric-label">Assessment score</span>
+              <span className="metric-label">Mission score</span>
             </motion.div>
             <motion.div className="metric-card" variants={itemVariants}>
               <span className="metric-value">{progress}/{maxProgress}</span>
-              <span className="metric-label">Progress points</span>
+              <span className="metric-label">Clearance points</span>
             </motion.div>
             <motion.div className="metric-card" variants={itemVariants}>
               <span className="metric-value">{moduleIndex + 1}/{totalModules}</span>
-              <span className="metric-label">Modules completed</span>
+              <span className="metric-label">Levels completed</span>
             </motion.div>
           </div>
         </motion.div>
@@ -86,7 +86,7 @@ export function ModuleCompleteScreen() {
           transition={{ delay: 0.8 }}
         >
           <ActionButton
-            label={isLast ? 'View Assessment Summary' : 'Continue to Next Module'}
+            label={isLast ? 'View Debriefing' : 'Proceed to Next Level'}
             onClick={advanceFromModuleComplete}
             variant="teal"
             size="lg"

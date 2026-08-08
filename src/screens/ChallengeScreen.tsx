@@ -2,7 +2,7 @@ import { AppFrame } from '../components/AppFrame';
 import { ChallengeRenderer } from '../components/ChallengeRenderer';
 import { useGame } from '../context/GameContext';
 import { motion } from 'framer-motion';
-import { Lightbulb } from 'lucide-react';
+import { Radar } from 'lucide-react';
 
 export function ChallengeScreen() {
   const { module } = useGame();
@@ -17,7 +17,7 @@ export function ChallengeScreen() {
         >
           <span className="section-label">{module?.subtitle}</span>
           <h2 className="exercise-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Lightbulb size={28} color="var(--teal-primary)" /> Applied Exercise
+            <Radar size={28} color="var(--teal-primary)" /> Operative Assessment
           </h2>
         </motion.div>
         

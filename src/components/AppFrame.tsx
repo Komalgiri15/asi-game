@@ -8,19 +8,45 @@ interface AppFrameProps {
 }
 
 import { motion } from 'framer-motion';
+import bgImg from '../assets/bg.png';
+import { VoiceoverToggle } from '../context/VoiceoverContext';
 
 export function AppFrame({ children, showHeader = true }: AppFrameProps) {
   const { phase } = useGame();
+  const isFullBleed = !showHeader;
+
   return (
-    <div className="app-frame" style={{ position: 'relative', zIndex: 1 }}>
-      {/* Global Background Decorative Elements */}
-      <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', zIndex: 0, pointerEvents: 'none' }}>
-        <div className="bg-shape shape-1" />
-        <div className="bg-shape shape-2" />
-        <div className="bg-shape shape-3" />
-      </div>
+    <div className={`app-layout${isFullBleed ? ' app-layout--hub' : ''}`}>
+      <div
+        className="app-layout__bg"
+        style={{ backgroundImage: `url(${bgImg})` }}
+        aria-hidden="true"
+      />
+      <div className="app-layout__scrim" aria-hidden="true" />
+      <div
+        className="app-frame"
+        style={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          background: 'transparent',
+          overflow: 'hidden',
+          border: isFullBleed ? 'none' : '12px solid var(--teal-primary)',
+          borderRadius: isFullBleed ? 0 : '16px',
+          margin: isFullBleed ? 0 : '8px',
+          boxSizing: 'border-box',
+        }}
+      >
+      {!isFullBleed && (
+        <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', zIndex: 0, pointerEvents: 'none' }}>
+          <div className="bg-shape shape-1" />
+          <div className="bg-shape shape-2" />
+          <div className="bg-shape shape-3" />
+        </div>
+      )}
       
       <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', width: '100%', height: '100%' }}>
+        {isFullBleed && <VoiceoverToggle className="voiceover-toggle--floating" />}
         {showHeader && <AppHeader />}
         <div className="app-body">
           <motion.div
@@ -35,6 +61,7 @@ export function AppFrame({ children, showHeader = true }: AppFrameProps) {
           </motion.div>
         </div>
       </div>
+    </div>
     </div>
   );
 }
@@ -58,6 +85,7 @@ function AppHeader() {
       </div>
       <div className="header-title">{module?.title}</div>
       <div className="header-metrics">
+        <VoiceoverToggle className="voiceover-toggle--header" />
         <div className="header-progress">
           <div className="header-progress-track">
             <div className="header-progress-fill" style={{ width: `${progressPercent}%` }} />

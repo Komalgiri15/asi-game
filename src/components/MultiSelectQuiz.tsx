@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { FeedbackBanner, ActionButton } from './AppFrame';
-import { MultiSelectChallenge } from '../types/game';
+import { MultiSelectChallenge, scoreMultiSelect } from '../types/game';
+import { useAutoVoiceover } from '../hooks/useVoiceover';
 
 interface MultiSelectQuizProps {
   challenge: MultiSelectChallenge;
@@ -10,6 +11,8 @@ interface MultiSelectQuizProps {
 export function MultiSelectQuiz({ challenge, onComplete }: MultiSelectQuizProps) {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [submitted, setSubmitted] = useState(false);
+
+  useAutoVoiceover(`${challenge.question} ${challenge.instruction}`);
 
   const toggle = (id: string) => {
     if (submitted) return;
@@ -24,13 +27,7 @@ export function MultiSelectQuiz({ challenge, onComplete }: MultiSelectQuizProps)
   const handleSubmit = () => {
     if (submitted) return;
     setSubmitted(true);
-
-    const correctIds = challenge.options.filter((o) => o.correct).map((o) => o.id);
-    const correctSelected = correctIds.filter((id) => selected.has(id)).length;
-    const wrongSelected = [...selected].filter((id) => !correctIds.includes(id)).length;
-    const accuracy = Math.max(0, correctSelected - wrongSelected) / challenge.requiredCount;
-    const points = Math.round(challenge.points * Math.min(1, accuracy));
-
+    const points = scoreMultiSelect(challenge, selected);
     setTimeout(() => onComplete(points), 1400);
   };
 

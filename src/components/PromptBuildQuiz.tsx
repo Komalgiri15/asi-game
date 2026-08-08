@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { FeedbackBanner, ActionButton } from './AppFrame';
 import { PromptBuildChallenge } from '../types/game';
+import { useAutoVoiceover } from '../hooks/useVoiceover';
 
 interface PromptBuildQuizProps {
   challenge: PromptBuildChallenge;
@@ -17,6 +18,8 @@ export function PromptBuildQuiz({ challenge, onComplete }: PromptBuildQuizProps)
   const [built, setBuilt] = useState<typeof challenge.pieces>([]);
   const [submitted, setSubmitted] = useState(false);
   const [wrongPick, setWrongPick] = useState(false);
+
+  useAutoVoiceover(`${challenge.question} ${challenge.instruction}`);
 
   const nextOrder = built.length + 1;
 

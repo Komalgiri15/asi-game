@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { FeedbackBanner, ActionButton } from './AppFrame';
 import { SpotMissingChallenge } from '../types/game';
+import { useAutoVoiceover } from '../hooks/useVoiceover';
 
 interface SpotMissingQuizProps {
   challenge: SpotMissingChallenge;
@@ -10,6 +11,10 @@ interface SpotMissingQuizProps {
 export function SpotMissingQuiz({ challenge, onComplete }: SpotMissingQuizProps) {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [submitted, setSubmitted] = useState(false);
+
+  useAutoVoiceover(
+    `${challenge.question} ${challenge.sampleText} Click all issues you spot. ${challenge.requiredCount} to find.`,
+  );
 
   const toggle = (id: string) => {
     if (submitted) return;

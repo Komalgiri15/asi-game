@@ -11,10 +11,10 @@ export function SummaryScreen() {
     <AppFrame showHeader={false}>
       <div className="screen summary-screen">
         <div className="summary-header">
-          <span className="landing-eyebrow">Assessment Complete</span>
-          <h2 className="summary-title">AFA Company Profile Skills Summary</h2>
+          <span className="landing-eyebrow">Operation Complete</span>
+          <h2 className="summary-title">AFA Operative Training Debrief</h2>
           <p className="summary-subtitle">
-            Review your competency results and the Unilever PLC reference comparison below.
+            Review your operative clearance results and the Unilever PLC reference intel below.
           </p>
         </div>
 

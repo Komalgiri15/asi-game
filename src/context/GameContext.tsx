@@ -6,6 +6,7 @@ interface GameContextValue extends GameState {
   module: (typeof MODULES)[number] | null;
   totalModules: number;
   maxProgress: number;
+  completeIntroVideo: () => void;
   completeIntro: () => void;
   startAssessment: () => void;
   advanceFromBriefing: () => void;
@@ -29,7 +30,7 @@ interface GameContextValue extends GameState {
 const MAX_PROGRESS = MODULES.reduce((sum, m) => sum + m.progressWeight, 0);
 
 const initialState: GameState = {
-  phase: 'intro',
+  phase: 'intro-video',
   moduleIndex: 0,
   score: 0,
   progress: 0,
@@ -41,6 +42,10 @@ const GameContext = createContext<GameContextValue | null>(null);
 
 export function GameProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<GameState>(initialState);
+
+  const completeIntroVideo = useCallback(() => {
+    setState((s) => ({ ...s, phase: 'title' }));
+  }, []);
 
   const completeIntro = useCallback(() => {
     setState((s) => ({ ...s, phase: 'title' }));
@@ -106,6 +111,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
       module: state.phase === 'title' || state.phase === 'intro' ? null : MODULES[state.moduleIndex] ?? null,
       totalModules: MODULES.length,
       maxProgress: MAX_PROGRESS,
+      completeIntroVideo,
       completeIntro,
       startAssessment,
       advanceFromBriefing,
@@ -126,6 +132,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     }),
     [
       state,
+      completeIntroVideo,
       completeIntro,
       startAssessment,
       advanceFromBriefing,

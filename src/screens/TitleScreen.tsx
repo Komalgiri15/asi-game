@@ -2,7 +2,7 @@ import { AppFrame } from '../components/AppFrame';
 import { basicProfile, improvedProfile } from '../data/modules';
 import { useGame } from '../context/GameContext';
 import { motion } from 'framer-motion';
-import { ArrowRight, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Shield } from 'lucide-react';
 
 export function TitleScreen() {
   const { startAssessment } = useGame();
@@ -35,15 +35,17 @@ export function TitleScreen() {
           animate="visible"
         >
           <motion.div className="landing-brand" variants={itemVariants}>
-            <span className="landing-eyebrow">Acuity Analytics</span>
-            <span className="landing-product">Agent Fleet Assistant (AFA)</span>
+            <span className="landing-eyebrow" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <Shield size={16} /> Acuity Intelligence Agency
+            </span>
+            <span className="landing-product">Agent Fleet Assistant (AFA) Training</span>
           </motion.div>
           <motion.h1 className="landing-title" variants={itemVariants}>
-            Company Profile Best Practices
+            Operative Skills: Company Profiles
           </motion.h1>
           <motion.p className="landing-description" variants={itemVariants}>
-            An interactive skills assessment covering prompt design, source prioritization,
-            evidence requirements, and output validation for investment-grade company profiles.
+            An interactive agent simulation covering prompt design, target prioritization,
+            evidence gathering, and output validation for investment-grade profiles.
           </motion.p>
           <motion.ul className="landing-outline" variants={itemVariants}>
             <li><CheckCircle2 size={18} color="var(--teal-bright)" /> 6 guided modules with applied scenarios</li>

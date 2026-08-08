@@ -1,5 +1,6 @@
 export type GamePhase =
   | 'intro'
+  | 'intro-video'
   | 'title'
   | 'briefing'
   | 'reference'
@@ -75,6 +76,31 @@ export type Challenge =
   | MultiSelectChallenge
   | PromptBuildChallenge
   | SpotMissingChallenge;
+
+/** Minimum points required to clear the level challenge. */
+export function getPassScore(challenge: Challenge): number {
+  if (challenge.type === 'pick-one') {
+    return challenge.points;
+  }
+  return Math.ceil(challenge.points * 0.6);
+}
+
+export function isAllOrNothingChallenge(challenge: Challenge): boolean {
+  return challenge.type === 'pick-one';
+}
+
+/** Score multi-select: each correct earns a share; wrong picks deduct half a share. */
+export function scoreMultiSelect(
+  challenge: MultiSelectChallenge,
+  selected: Iterable<string>,
+): number {
+  const selectedIds = [...selected];
+  const correctIds = challenge.options.filter((o) => o.correct).map((o) => o.id);
+  const correctSelected = correctIds.filter((id) => selectedIds.includes(id)).length;
+  const wrongSelected = selectedIds.filter((id) => !correctIds.includes(id)).length;
+  const share = challenge.points / challenge.requiredCount;
+  return Math.max(0, Math.round(correctSelected * share - wrongSelected * share * 0.5));
+}
 
 export interface GameState {
   phase: GamePhase;
