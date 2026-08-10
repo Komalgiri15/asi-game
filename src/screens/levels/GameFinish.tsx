@@ -3,10 +3,13 @@ import { getRank } from '../../types/game';
 import { BADGES } from '../../data/dealRoomData';
 import { Award, CheckSquare, Download } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useVoiceover } from '../../hooks/useVoiceover';
 
 export function GameFinish() {
   const { insightPoints, badges, restartGame, currentLevel, phase } = useGame();
   const rank = getRank(currentLevel, phase);
+
+  useVoiceover(`Mission Accomplished. Your final rank is ${rank}. Excellent work.`);
 
   const BEST_PRACTICES = [
     'Start with the purpose, not just the company name.',

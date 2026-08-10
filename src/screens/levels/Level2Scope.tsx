@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useGame } from '../../context/GameContext';
 import { motion } from 'framer-motion';
 import { ChevronRight, Database, CheckCircle2 } from 'lucide-react';
+import { useVoiceover } from '../../hooks/useVoiceover';
 
 const DIALS = [
   { key: 'period', label: 'Reporting period', target: 'latest reported fiscal year + most recent quarter available', options: ['latest reported fiscal year + most recent quarter available', 'All time'] },
@@ -25,6 +26,12 @@ export function Level2Scope() {
   const [step, setStep] = useState<'dials' | 'sources'>('dials');
   const [selectedSources, setSelectedSources] = useState<string[]>([]);
   const [proTipUsed] = useState(false);
+
+  useVoiceover(
+    step === 'dials' 
+      ? "Level 2. Define the scope and sources for the research. Set the reporting period and company scope."
+      : "Now, select the most reliable sources of truth."
+  );
 
   const handleDial = (key: string, value: string) => {
     if (!dials[key]) addInsightPoints(2); // Partial IP

@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useGame } from '../../context/GameContext';
 import { motion } from 'framer-motion';
+import { useVoiceover } from '../../hooks/useVoiceover';
 
 
 const QUADRANTS = [
@@ -18,6 +19,12 @@ export function Level3Evidence() {
   const [step, setStep] = useState<'evidence' | 'quadrants' | 'reveal'>('evidence');
   const [evidenceAdded, setEvidenceAdded] = useState(false);
   const [addedQuadrants, setAddedQuadrants] = useState<string[]>([]);
+  
+  const { speak } = useVoiceover("Level 3. Demand evidence, not opinions. Drag the objective data points to their correct quadrants, and ignore the marketing fluff.");
+
+  useEffect(() => {
+    speak("Level 3. Demand evidence, not opinions. Force AFA to rely on hard facts rather than subjective language, and structure the output into the 4 requested quadrants.");
+  }, []);
 
   const handleAddEvidence = () => {
     setEvidenceAdded(true);
@@ -47,6 +54,7 @@ export function Level3Evidence() {
         unlockBadge('prompt-architect');
         unlockGoodie('master-prompt');
         addInsightPoints(25); // the big payoff
+        speak("Coach's Note: By explicitly requesting objective data, you prevent the AI from hallucinating or recycling corporate marketing.");
         
         // Override the ENTIRE prompt in RightRail by hacking the pieces to just contain the Final Prompt
         updatePromptPieces('purpose', []);

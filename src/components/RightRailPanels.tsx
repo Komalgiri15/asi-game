@@ -1,5 +1,5 @@
 import { useGame } from '../context/GameContext';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
 
 export function RightRailPanels() {
   return (
@@ -60,8 +60,31 @@ function PromptBuilderPanel() {
 function ProfilePreviewPanel() {
   const { currentLevel, validationChecks, refinements } = useGame();
 
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const rotateX = useTransform(y, [-200, 200], [4, -4]);
+  const rotateY = useTransform(x, [-200, 200], [-4, 4]);
+
+  function handleMouseMove(e: React.MouseEvent) {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const centerX = rect.x + rect.width / 2;
+    const centerY = rect.y + rect.height / 2;
+    x.set(e.clientX - centerX);
+    y.set(e.clientY - centerY);
+  }
+
+  function handleMouseLeave() {
+    x.set(0);
+    y.set(0);
+  }
+
   return (
-    <div className="flex-[1.5] flex flex-col bg-[#131C31] rounded-2xl border border-white/5 shadow-xl overflow-hidden relative">
+    <motion.div 
+      style={{ rotateX, rotateY, perspective: 1200 }}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      className="flex-[1.5] flex flex-col bg-[#131C31] rounded-2xl border border-white/5 shadow-2xl overflow-hidden relative"
+    >
       <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/5 rounded-full blur-[80px] pointer-events-none"></div>
       
       <div className="flex items-center gap-2 px-5 py-4 shrink-0">
@@ -69,9 +92,12 @@ function ProfilePreviewPanel() {
         <h3 className="text-[10px] font-extrabold text-slate-300 uppercase tracking-widest">Profile Preview</h3>
       </div>
       
-      <div className="flex-1 px-5 pb-5 overflow-hidden flex flex-col">
-        <div className="flex-1 bg-white rounded-lg shadow-2xl overflow-hidden relative flex flex-col">
-        <div className="absolute inset-0 p-4 overflow-y-auto">
+      <div className="flex-1 px-5 pb-5 overflow-hidden flex flex-col" style={{ transformStyle: 'preserve-3d' }}>
+        <motion.div 
+          style={{ translateZ: 30 }}
+          className="flex-1 bg-gradient-to-br from-white to-slate-100 rounded-xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] overflow-hidden relative flex flex-col border border-white/60"
+        >
+        <div className="absolute inset-0 p-5 overflow-y-auto">
           {currentLevel === 0 && (
              <div className="animate-pulse">
                 <div className="h-6 w-3/4 bg-slate-200 rounded mb-4"></div>
@@ -144,8 +170,8 @@ function ProfilePreviewPanel() {
              </div>
           )}
         </div>
+        </motion.div>
       </div>
-    </div>
-    </div>
+    </motion.div>
   );
 }

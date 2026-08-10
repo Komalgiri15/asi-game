@@ -1,19 +1,21 @@
 import { useState, useEffect } from 'react';
 import { useGame } from '../../context/GameContext';
 import { motion } from 'framer-motion';
+import { useVoiceover } from '../../hooks/useVoiceover';
 
 const CHIPS = [
-  { id: 'audience', text: 'for an investment committee', type: 'audience' },
   { id: 'financial', text: 'financial performance', type: 'focus' },
   { id: 'competitive', text: 'competitive position', type: 'focus' },
   { id: 'growth', text: 'growth drivers', type: 'focus' },
-  { id: 'risks', text: 'key risks', type: 'focus' }
+  { id: 'risks', text: 'key risks', type: 'focus' },
+  { id: 'audience', text: 'for an investment committee', type: 'audience' }
 ];
 
 export function Level1Purpose() {
   const { advanceLevel, addInsightPoints, unlockBadge, unlockGoodie, updatePromptPieces } = useGame();
   const [selectedChips, setSelectedChips] = useState<string[]>([]);
   const [completed, setCompleted] = useState(false);
+  const { speak } = useVoiceover("Level 1. Start with the purpose, not just the company name. A F A produces more relevant, tailored output when it knows how the profile will be used.");
 
   const handleChipClick = (id: string) => {
     if (completed || selectedChips.includes(id)) return;
@@ -40,6 +42,7 @@ export function Level1Purpose() {
       setCompleted(true);
       unlockBadge('purpose-setter');
       unlockGoodie('purpose-prompt');
+      speak("Coach's Note: By stating the audience and the decisions it supports, you help A F A focus on what's most relevant.");
     }
   };
 

@@ -2,10 +2,17 @@ import { useState } from 'react';
 import { useGame } from '../../context/GameContext';
 import { Play } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useVoiceover } from '../../hooks/useVoiceover';
 
 export function Level0GenericPrompt() {
   const { advanceLevel, addInsightPoints } = useGame();
   const [step, setStep] = useState<'brief' | 'prompt' | 'feedback'>('brief');
+
+  useVoiceover(
+    step === 'brief' 
+      ? "Welcome to the Deal Room. Your first task is to prepare a one-page company profile of Unilever PLC."
+      : "Let's see what A F A gives us with a generic prompt..."
+  );
 
   const handleRun = () => {
     setStep('feedback');

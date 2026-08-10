@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useGame } from '../../context/GameContext';
 import { motion } from 'framer-motion';
+import { useVoiceover } from '../../hooks/useVoiceover';
 
 
 const REFINEMENTS = [
@@ -17,6 +18,8 @@ export function Level5Expertise() {
   const { advanceLevel, addInsightPoints, unlockBadge, unlockGoodie, updateRefinement } = useGame();
   const [refinements, setRefinements] = useState<Record<string, boolean>>({});
   const [delivered, setDelivered] = useState(false);
+
+  const { speak } = useVoiceover("Level 5. Add Human Expertise. Apply the final polish to make this slide ready for the deal room.");
 
   const handleToggle = (key: string) => {
     if (!refinements[key]) {
@@ -46,6 +49,8 @@ export function Level5Expertise() {
     unlockBadge('deal-room-ready');
     unlockGoodie('best-practices-toolkit');
     
+    speak("Profile Delivered! Congratulations, you have mastered the A F A best practices.");
+    
     advanceLevel();
   };
 
@@ -63,30 +68,106 @@ export function Level5Expertise() {
         <div className="flex-1 w-full bg-slate-800 rounded-xl border border-slate-700 p-6 grid place-items-center relative overflow-hidden">
           <div className="absolute top-4 left-4 text-xs font-bold text-slate-500 tracking-widest uppercase">Mock Slide Draft</div>
           
-          <div className={`transition-all duration-700 bg-white shadow-2xl overflow-hidden relative flex flex-col ${
-            refinements.design ? 'w-[90%] aspect-video rounded-md p-6' : 'w-full aspect-[4/3] p-4 rounded-sm'
+          <div className={`transition-all duration-1000 bg-white overflow-hidden relative flex flex-col ${
+            refinements.design ? 'w-full max-w-2xl aspect-video rounded-2xl p-8 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] border border-slate-200' : 'w-[80%] aspect-[4/3] p-4 rounded-sm shadow-md bg-slate-50'
           }`}>
-            <div className={`transition-all duration-700 ${refinements.hierarchy ? 'border-b-2 border-slate-900 pb-2 mb-4' : 'mb-2'}`}>
-              <div className={`font-bold transition-all duration-700 ${
-                refinements.branding ? 'text-teal-700' : 'text-black'
-              } ${refinements.hierarchy ? 'text-2xl' : 'text-lg'}`}>Unilever PLC</div>
-              {refinements.story && <div className="text-sm text-slate-500 mt-1">Transforming the portfolio for higher growth margins</div>}
+            
+            {/* Header Area */}
+            <div className={`transition-all duration-700 flex flex-col ${
+              refinements.hierarchy 
+                ? 'border-b border-slate-200 pb-4 mb-6' 
+                : 'mb-4'
+            }`}>
+              <div className="flex justify-between items-start">
+                <div>
+                  <div className={`font-black tracking-tight transition-all duration-700 ${
+                    refinements.branding ? 'text-transparent bg-clip-text bg-gradient-to-r from-teal-700 to-cyan-600' : 'text-slate-800'
+                  } ${refinements.hierarchy ? 'text-3xl' : 'text-lg'}`}>
+                    Unilever PLC
+                  </div>
+                  {refinements.story && (
+                    <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} className="text-sm font-medium text-slate-500 mt-2">
+                      Transforming the portfolio for higher growth margins
+                    </motion.div>
+                  )}
+                </div>
+                {refinements.branding && (
+                  <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="w-10 h-10 rounded-full bg-gradient-to-br from-teal-500 to-cyan-500 flex items-center justify-center text-white font-black text-lg shadow-lg">
+                    U
+                  </motion.div>
+                )}
+              </div>
             </div>
 
-            <div className={`flex-1 transition-all duration-700 ${refinements.placement ? 'grid grid-cols-2 gap-4' : 'flex flex-col gap-2'}`}>
-              <div className={`bg-slate-100 p-3 transition-all ${refinements.formatting ? 'rounded-lg text-sm leading-relaxed' : 'text-xs'}`}>
-                {refinements.formatting ? 'Financials are robust with Q3 growth driven by pricing power.' : 'financials: good. Q3 up. pricing.'}
+            {/* Content Area */}
+            <div className={`flex-1 transition-all duration-700 ${
+              refinements.placement 
+                ? 'grid grid-cols-5 gap-6' 
+                : 'flex flex-col gap-3'
+            }`}>
+              
+              {/* Left Column / Top Block */}
+              <div className={`transition-all duration-700 flex flex-col justify-center ${
+                refinements.placement ? 'col-span-2' : ''
+              }`}>
+                <div className={`transition-all duration-700 h-full flex flex-col justify-center ${
+                  refinements.design 
+                    ? 'bg-gradient-to-br from-slate-50 to-slate-100 p-5 rounded-2xl border border-slate-200 shadow-sm' 
+                    : 'bg-slate-200 p-3'
+                }`}>
+                  {refinements.formatting ? (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-teal-500"></div>
+                        <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Q3 Performance</div>
+                      </div>
+                      <div className="text-3xl font-black text-slate-800">
+                        €15.2<span className="text-lg text-slate-400 ml-1">bn</span>
+                      </div>
+                      <p className="text-[11px] text-slate-600 leading-relaxed font-medium">
+                        Financials are robust with Q3 growth driven by exceptional pricing power and brand strength.
+                      </p>
+                    </motion.div>
+                  ) : (
+                    <span className="text-xs text-slate-800 font-mono">financials: good. Q3 up. pricing.</span>
+                  )}
+                </div>
               </div>
-              <div className="bg-slate-100 p-3 flex items-center justify-center">
-                {refinements.chart ? (
-                  <div className="flex items-end gap-2 h-full py-4">
-                    <div className="w-4 bg-teal-200 h-1/3"></div>
-                    <div className="w-4 bg-teal-400 h-2/3"></div>
-                    <div className="w-4 bg-teal-600 h-full"></div>
-                  </div>
-                ) : (
-                  <div className="text-slate-400 text-xs italic">[Insert chart]</div>
-                )}
+
+              {/* Right Column / Bottom Block */}
+              <div className={`transition-all duration-700 flex items-center justify-center ${
+                refinements.placement ? 'col-span-3' : 'flex-1'
+              }`}>
+                <div className={`w-full h-full transition-all duration-700 flex flex-col justify-end ${
+                  refinements.design 
+                    ? 'bg-white p-6 rounded-2xl border border-slate-100 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.05)] relative overflow-hidden' 
+                    : 'bg-slate-200 p-3'
+                }`}>
+                  {refinements.chart ? (
+                    <div className="w-full h-full flex items-end justify-between gap-3 pt-6 relative z-10">
+                      {[40, 55, 45, 75, 60, 90].map((height, i) => (
+                        <div key={i} className="w-full relative group h-full flex flex-col justify-end">
+                          <motion.div 
+                            initial={{ height: 0 }}
+                            animate={{ height: `${height}%` }}
+                            transition={{ delay: i * 0.1, duration: 0.5, type: 'spring' }}
+                            className={`w-full rounded-t-sm ${
+                              refinements.branding 
+                                ? i === 5 ? 'bg-gradient-to-t from-teal-500 to-cyan-400 shadow-[0_0_15px_rgba(45,212,191,0.5)]' : 'bg-slate-200'
+                                : 'bg-slate-400'
+                            }`}
+                          ></motion.div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-slate-500 text-xs italic m-auto font-mono">[Insert chart data here]</div>
+                  )}
+                  
+                  {refinements.design && refinements.chart && (
+                    <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-teal-50/50 to-transparent pointer-events-none"></div>
+                  )}
+                </div>
               </div>
             </div>
           </div>

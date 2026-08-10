@@ -35,6 +35,8 @@ export interface GameState {
 
   // Refinement state (Level 5)
   refinements: Record<string, boolean>;
+  
+  isMuted: boolean;
 }
 
 export interface LevelConfig {

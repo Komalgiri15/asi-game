@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useVoiceover } from './useVoiceover';
+import { useGame } from '../context/GameContext';
 
 function estimateSpeechMs(text: string, rate = 0.95) {
   const words = text.trim().split(/\s+/).filter(Boolean).length;
@@ -8,21 +9,20 @@ function estimateSpeechMs(text: string, rate = 0.95) {
 }
 
 export function useTypingVoiceover(text: string, enabled = true) {
-  const { play, stop, isPlaying, isMuted, isSupported } = useVoiceover();
+  const { speak } = useVoiceover();
+  const { isMuted } = useGame();
   const [displayedText, setDisplayedText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const intervalRef = useRef<number | null>(null);
-  const wasPlayingRef = useRef(false);
 
   useEffect(() => {
     if (!enabled || !text.trim()) return;
 
-    wasPlayingRef.current = false;
     setDisplayedText('');
     setIsTyping(true);
 
     const startDelay = window.setTimeout(() => {
-      if (isSupported && !isMuted) play(text);
+      if (window.speechSynthesis && !isMuted) speak(text);
     }, 450);
 
     const duration = isMuted ? text.length * 28 : estimateSpeechMs(text);
@@ -42,22 +42,9 @@ export function useTypingVoiceover(text: string, enabled = true) {
     return () => {
       window.clearTimeout(startDelay);
       if (intervalRef.current) window.clearInterval(intervalRef.current);
-      stop();
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
     };
-  }, [text, enabled, isMuted, isSupported, play, stop]);
+  }, [text, enabled, isMuted, speak]);
 
-  useEffect(() => {
-    if (isPlaying) {
-      wasPlayingRef.current = true;
-      return;
-    }
-    if (wasPlayingRef.current && displayedText.length < text.length) {
-      if (intervalRef.current) window.clearInterval(intervalRef.current);
-      intervalRef.current = null;
-      setDisplayedText(text);
-      setIsTyping(false);
-    }
-  }, [isPlaying, displayedText.length, text]);
-
-  return { displayedText, isTyping, isPlaying };
+  return { displayedText, isTyping };
 }

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useGame } from '../../context/GameContext';
 import { motion } from 'framer-motion';
 import { Check } from 'lucide-react';
+import { useVoiceover } from '../../hooks/useVoiceover';
 
 const CHECKS = [
   { id: 'c1', text: 'Is the company description accurate and aligned with current operations?' },
@@ -23,6 +24,8 @@ export function Level4Validate() {
   const [checkedItems, setCheckedItems] = useState<string[]>([]);
   const [finished, setFinished] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
+
+  const { speak } = useVoiceover("Level 4. Validate and review the output before use. Cross-check these claims against our trusted sources before approving.");
 
   const ITEMS_PER_PAGE = 4;
   const totalPages = Math.ceil(CHECKS.length / ITEMS_PER_PAGE);
@@ -56,6 +59,8 @@ export function Level4Validate() {
     unlockBadge('the-validator');
     unlockGoodie('validation-checklist');
     
+    speak("Coach's Note: Never blindly trust AI output. If a claim contradicts your source of truth, remove or correct it.");
+
     if (allOpened) {
       addInsightPoints(5); // bonus
       unlockBadge('thorough-reviewer'); // bonus

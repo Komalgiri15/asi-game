@@ -14,6 +14,8 @@ interface GameContextValue extends GameState {
   startGame: () => void;
   finishGame: () => void;
   restartGame: () => void;
+  isMuted: boolean;
+  toggleMute: () => void;
 }
 
 const initialState: GameState = {
@@ -29,6 +31,7 @@ const initialState: GameState = {
   },
   validationChecks: {},
   refinements: {},
+  isMuted: false,
 };
 
 const GameContext = createContext<GameContextValue | null>(null);
@@ -103,7 +106,11 @@ export function GameProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const restartGame = useCallback(() => {
-    setState(initialState);
+    setState(s => ({ ...initialState, isMuted: s.isMuted }));
+  }, []);
+
+  const toggleMute = useCallback(() => {
+    setState(s => ({ ...s, isMuted: !s.isMuted }));
   }, []);
 
   const value = useMemo<GameContextValue>(
@@ -120,6 +127,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
       startGame,
       finishGame,
       restartGame,
+      toggleMute,
     }),
     [
       state,
@@ -133,6 +141,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
       startGame,
       finishGame,
       restartGame,
+      toggleMute,
     ],
   );
 

@@ -3,7 +3,7 @@ import { useGame } from '../context/GameContext';
 import { LEVELS, BADGES, GOODIES } from '../data/dealRoomData';
 import { getRank } from '../types/game';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Award, Gift, Check } from 'lucide-react';
+import { Award, Gift, Check, Volume2, VolumeX } from 'lucide-react';
 import { RightRailPanels } from './RightRailPanels';
 
 interface AppFrameProps {
@@ -46,50 +46,85 @@ export function AppFrame({ children }: AppFrameProps) {
 }
 
 function TopHUD() {
-  const { insightPoints, badges, unlockedGoodies, currentLevel, phase } = useGame();
+  const { insightPoints, badges, unlockedGoodies, currentLevel, phase, isMuted, toggleMute } = useGame();
   const rank = getRank(currentLevel, phase);
   const [showBadges, setShowBadges] = useState(false);
   const [showGoodies, setShowGoodies] = useState(false);
 
   return (
-    <header className="h-14 flex items-center justify-between px-8 z-20 shrink-0">
-      <div className="flex items-center gap-4">
-        <div className="font-extrabold text-lg tracking-tight text-white flex items-center gap-2">
-          <div className="w-6 h-6 bg-gradient-to-br from-teal-400 to-cyan-500 rounded-md shadow-lg shadow-teal-500/20 flex items-center justify-center">
-            <div className="w-3 h-3 bg-[#0B1120] rounded-sm"></div>
+    <header className="h-16 flex items-center justify-between px-6 z-20 shrink-0 bg-[#0B1120] border-b border-white/5">
+      {/* Branding */}
+      <div className="flex items-center gap-4 shrink-0 w-64">
+        <div className="font-bold text-lg tracking-tight text-white flex items-center gap-2.5">
+          <div className="w-5 h-5 bg-gradient-to-br from-teal-500 to-cyan-600 rounded flex items-center justify-center shadow-sm">
+            <div className="w-2 h-2 bg-white rounded-sm opacity-90"></div>
           </div>
-          <span>Acuity<span className="text-slate-400 font-medium ml-1">Deal Room</span></span>
+          <span>Acuity <span className="text-slate-400 font-light ml-0.5">Deal Room</span></span>
         </div>
       </div>
       
-      <div className="flex items-center gap-6">
-        <div className="flex items-center gap-3 bg-white/5 px-4 py-1.5 rounded-full border border-white/5 backdrop-blur-md">
-          <span className="text-slate-400 text-xs font-bold uppercase tracking-wider">Rank</span>
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-300 to-cyan-300 font-extrabold">{rank}</span>
-        </div>
-        
-        <div className="flex items-center gap-3">
-          <div className="text-right leading-none">
-            <div className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-amber-500 drop-shadow-sm">{insightPoints}</div>
-            <div className="text-[9px] text-slate-500 uppercase tracking-widest font-bold mt-1">Insight Pts</div>
+      {/* Professional Progress Indicator */}
+      {phase === 'playing' && (
+        <div className="flex-1 max-w-md mx-auto flex items-center gap-4 hidden lg:flex opacity-90">
+          <div className="flex-1 h-1 bg-slate-800 rounded-full overflow-hidden flex shadow-inner">
+            <motion.div 
+              className="h-full bg-teal-500"
+              initial={{ width: 0 }}
+              animate={{ width: `${(currentLevel / (LEVELS.length - 1)) * 100}%` }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+            ></motion.div>
           </div>
+          <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest whitespace-nowrap">
+            Phase {currentLevel + 1} of {LEVELS.length}
+          </span>
+        </div>
+      )}
+
+      {/* Metrics and Controls */}
+      <div className="flex items-center gap-5 shrink-0 justify-end w-auto lg:w-[400px]">
+        
+        {/* Rank */}
+        <div className="flex flex-col items-end justify-center">
+          <span className="text-[9px] font-semibold text-slate-500 uppercase tracking-widest mb-0.5">Current Rank</span>
+          <span className="text-[13px] font-bold text-teal-400 leading-none">{rank}</span>
         </div>
 
-        <div className="flex items-center gap-2 border-l border-white/10 pl-6 relative">
+        <div className="h-8 w-[1px] bg-white/10 mx-1"></div>
+
+        {/* Insight Score */}
+        <div className="flex flex-col items-end justify-center">
+          <span className="text-[9px] font-semibold text-slate-500 uppercase tracking-widest mb-0.5">Insight Score</span>
+          <span className="text-[13px] font-bold text-white leading-none">{insightPoints}</span>
+        </div>
+
+        <div className="h-8 w-[1px] bg-white/10 mx-1"></div>
+
+        {/* Action Icons */}
+        <div className="flex items-center gap-1 relative">
+          <button 
+            onClick={toggleMute}
+            className={`flex items-center justify-center w-8 h-8 rounded transition-colors ${isMuted ? 'text-slate-500 hover:text-slate-300' : 'text-slate-300 hover:text-white hover:bg-white/5'}`}
+            title={isMuted ? "Unmute Voiceover" : "Mute Voiceover"}
+          >
+            {isMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}
+          </button>
+          
           <button 
             onClick={() => { setShowBadges(!showBadges); setShowGoodies(false); }}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-md transition-colors ${showBadges ? 'bg-slate-700 text-amber-300' : 'hover:bg-slate-800 text-slate-300'}`}
+            className={`flex items-center justify-center w-8 h-8 rounded transition-colors relative ${showBadges ? 'text-teal-400 bg-white/5' : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'}`}
+            title="Badges"
           >
-            <Award size={18} className={badges.length > 0 ? 'text-amber-400' : 'text-slate-500'} />
-            <span className="text-sm font-medium">{badges.length}</span>
+            <Award size={15} />
+            {badges.length > 0 && <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-teal-500 rounded-full border border-[#0B1120]"></span>}
           </button>
           
           <button 
             onClick={() => { setShowGoodies(!showGoodies); setShowBadges(false); }}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-md transition-colors ${showGoodies ? 'bg-slate-700 text-teal-300' : 'hover:bg-slate-800 text-slate-300'}`}
+            className={`flex items-center justify-center w-8 h-8 rounded transition-colors relative ${showGoodies ? 'text-teal-400 bg-white/5' : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'}`}
+            title="Toolkit"
           >
-            <Gift size={18} className={unlockedGoodies.length > 0 ? 'text-teal-400' : 'text-slate-500'} />
-            <span className="text-sm font-medium">{unlockedGoodies.length}</span>
+            <Gift size={15} />
+            {unlockedGoodies.length > 0 && <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-teal-500 rounded-full border border-[#0B1120]"></span>}
           </button>
 
           {/* Modals/Dropdowns */}
@@ -97,21 +132,21 @@ function TopHUD() {
             {showBadges && (
               <motion.div 
                 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }}
-                className="absolute top-12 right-12 w-64 bg-slate-800 border border-slate-600 rounded-lg shadow-xl p-4 z-50"
+                className="absolute top-12 right-12 w-64 bg-[#131C31] border border-white/10 rounded-lg shadow-2xl p-4 z-50"
               >
-                <h4 className="text-xs font-bold text-slate-400 uppercase mb-3 border-b border-slate-700 pb-2">Unlocked Badges</h4>
+                <h4 className="text-[10px] font-bold text-slate-400 uppercase mb-3 border-b border-white/5 pb-2">Unlocked Badges</h4>
                 {badges.length === 0 ? (
-                  <div className="text-sm text-slate-500 italic">No badges yet. Keep playing!</div>
+                  <div className="text-xs text-slate-500 italic">No badges yet. Keep playing!</div>
                 ) : (
                   <div className="space-y-3">
                     {badges.map(bId => {
                       const b = BADGES[bId];
                       return (
                         <div key={b.id} className="flex items-start gap-3">
-                          <div className="mt-0.5 text-amber-400"><Award size={16} /></div>
+                          <div className="mt-0.5 text-teal-400"><Award size={14} /></div>
                           <div>
-                            <div className="text-sm font-bold text-slate-200">{b.name}</div>
-                            <div className="text-xs text-slate-400">{b.description}</div>
+                            <div className="text-xs font-bold text-slate-200">{b.name}</div>
+                            <div className="text-[10px] text-slate-400 mt-0.5 leading-snug">{b.description}</div>
                           </div>
                         </div>
                       );
@@ -124,22 +159,22 @@ function TopHUD() {
             {showGoodies && (
               <motion.div 
                 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }}
-                className="absolute top-12 right-0 w-80 bg-slate-800 border border-slate-600 rounded-lg shadow-xl p-4 z-50"
+                className="absolute top-12 right-0 w-80 bg-[#131C31] border border-white/10 rounded-lg shadow-2xl p-4 z-50"
               >
-                <h4 className="text-xs font-bold text-slate-400 uppercase mb-3 border-b border-slate-700 pb-2">Toolkit / Goodies</h4>
+                <h4 className="text-[10px] font-bold text-slate-400 uppercase mb-3 border-b border-white/5 pb-2">Analyst Toolkit</h4>
                 {unlockedGoodies.length === 0 ? (
-                  <div className="text-sm text-slate-500 italic">No goodies yet. Complete levels to earn templates!</div>
+                  <div className="text-xs text-slate-500 italic">No goodies yet. Complete levels to earn templates!</div>
                 ) : (
-                  <div className="space-y-4">
+                  <div className="space-y-3">
                     {unlockedGoodies.map(gId => {
                       const g = GOODIES[gId];
                       return (
-                        <div key={g.id} className="bg-slate-900 rounded p-3 border border-slate-700">
-                          <div className="flex items-center gap-2 text-teal-300 font-bold mb-1">
-                            <Gift size={14} /> <span className="text-sm">{g.name}</span>
+                        <div key={g.id} className="bg-[#0B1120] rounded-md p-3 border border-white/5">
+                          <div className="flex items-center gap-2 text-teal-400 font-bold mb-1">
+                            <Gift size={12} /> <span className="text-xs">{g.name}</span>
                           </div>
-                          <div className="text-xs text-slate-400 mb-2">{g.description}</div>
-                          <div className="text-xs font-mono bg-slate-950 p-2 rounded text-slate-300 whitespace-pre-wrap">
+                          <div className="text-[10px] text-slate-400 mb-2 leading-snug">{g.description}</div>
+                          <div className="text-[10px] font-mono bg-[#131C31] p-2 rounded text-slate-300 whitespace-pre-wrap border border-white/5">
                             {g.content}
                           </div>
                         </div>
