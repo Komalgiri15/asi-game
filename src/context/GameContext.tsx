@@ -1,41 +1,34 @@
 import { createContext, useCallback, useContext, useMemo, useState, ReactNode } from 'react';
-import { MODULES } from '../data/modules';
-import { Competency, GameState } from '../types/game';
+import { GameState, GamePhase } from '../types/game';
+import { LEVELS } from '../data/dealRoomData';
 
 interface GameContextValue extends GameState {
-  module: (typeof MODULES)[number] | null;
-  totalModules: number;
-  maxProgress: number;
-  completeIntroVideo: () => void;
-  completeIntro: () => void;
-  startAssessment: () => void;
-  advanceFromBriefing: () => void;
-  advanceFromReference: () => void;
-  completeChallenge: (pointsEarned: number) => void;
-  advanceFromModuleComplete: () => void;
-  restartAssessment: () => void;
-  /** @deprecated */
-  mission: (typeof MODULES)[number] | null;
-  totalMissions: number;
-  maxXp: number;
+  totalLevels: number;
+  addInsightPoints: (points: number) => void;
+  advanceLevel: () => void;
+  unlockBadge: (badgeId: string) => void;
+  unlockGoodie: (goodieId: string) => void;
+  updatePromptPieces: (category: 'purpose' | 'scope' | 'evidence', pieces: string[]) => void;
+  updateValidationCheck: (checkId: string, value: boolean) => void;
+  updateRefinement: (refId: string, value: boolean) => void;
   startGame: () => void;
-  advanceFromMissionComplete: () => void;
+  finishGame: () => void;
   restartGame: () => void;
-  xp: number;
-  streak: number;
-  badges: Competency[];
-  missionIndex: number;
 }
 
-const MAX_PROGRESS = MODULES.reduce((sum, m) => sum + m.progressWeight, 0);
-
 const initialState: GameState = {
-  phase: 'intro-video',
-  moduleIndex: 0,
-  score: 0,
-  progress: 0,
-  competencies: [],
-  challengeComplete: false,
+  phase: 'intro',
+  currentLevel: 0,
+  insightPoints: 0,
+  badges: [],
+  unlockedGoodies: [],
+  promptPieces: {
+    purpose: [],
+    scope: [],
+    evidence: [],
+  },
+  validationChecks: {},
+  refinements: {},
 };
 
 const GameContext = createContext<GameContextValue | null>(null);
@@ -43,103 +36,103 @@ const GameContext = createContext<GameContextValue | null>(null);
 export function GameProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<GameState>(initialState);
 
-  const completeIntroVideo = useCallback(() => {
-    setState((s) => ({ ...s, phase: 'title' }));
+  const addInsightPoints = useCallback((points: number) => {
+    setState((s) => ({ ...s, insightPoints: s.insightPoints + points }));
   }, []);
 
-  const completeIntro = useCallback(() => {
-    setState((s) => ({ ...s, phase: 'title' }));
-  }, []);
-
-  const startAssessment = useCallback(() => {
-    setState({ ...initialState, phase: 'briefing', moduleIndex: 0 });
-  }, []);
-
-  const advanceFromBriefing = useCallback(() => {
+  const advanceLevel = useCallback(() => {
     setState((s) => {
-      const mod = MODULES[s.moduleIndex];
-      return {
-        ...s,
-        phase: mod.reference ? 'reference' : 'challenge',
-        challengeComplete: false,
-      };
-    });
-  }, []);
-
-  const advanceFromReference = useCallback(() => {
-    setState((s) => ({ ...s, phase: 'challenge', challengeComplete: false }));
-  }, []);
-
-  const completeChallenge = useCallback((pointsEarned: number) => {
-    setState((s) => {
-      const mod = MODULES[s.moduleIndex];
-      const competency = mod.competency;
-      const hasCompetency = competency
-        ? s.competencies.some((c) => c.id === competency.id)
-        : false;
-      const competencies: Competency[] =
-        competency && !hasCompetency ? [...s.competencies, competency] : s.competencies;
-
-      return {
-        ...s,
-        phase: 'module-complete',
-        score: s.score + pointsEarned,
-        progress: s.progress + mod.progressWeight,
-        competencies,
-        challengeComplete: true,
-      };
-    });
-  }, []);
-
-  const advanceFromModuleComplete = useCallback(() => {
-    setState((s) => {
-      const nextIndex = s.moduleIndex + 1;
-      if (nextIndex >= MODULES.length) {
-        return { ...s, phase: 'summary' };
+      const nextLevel = s.currentLevel + 1;
+      if (nextLevel >= LEVELS.length) {
+        return { ...s, phase: 'finished' as GamePhase };
       }
-      return { ...s, phase: 'briefing', moduleIndex: nextIndex, challengeComplete: false };
+      return { ...s, currentLevel: nextLevel };
     });
   }, []);
 
-  const restartAssessment = useCallback(() => {
-    setState({ ...initialState, phase: 'intro' });
+  const unlockBadge = useCallback((badgeId: string) => {
+    setState((s) => ({
+      ...s,
+      badges: s.badges.includes(badgeId) ? s.badges : [...s.badges, badgeId],
+    }));
+  }, []);
+
+  const unlockGoodie = useCallback((goodieId: string) => {
+    setState((s) => ({
+      ...s,
+      unlockedGoodies: s.unlockedGoodies.includes(goodieId) ? s.unlockedGoodies : [...s.unlockedGoodies, goodieId],
+    }));
+  }, []);
+
+  const updatePromptPieces = useCallback((category: 'purpose' | 'scope' | 'evidence', pieces: string[]) => {
+    setState((s) => ({
+      ...s,
+      promptPieces: {
+        ...s.promptPieces,
+        [category]: pieces,
+      }
+    }));
+  }, []);
+
+  const updateValidationCheck = useCallback((checkId: string, value: boolean) => {
+    setState((s) => ({
+      ...s,
+      validationChecks: {
+        ...s.validationChecks,
+        [checkId]: value
+      }
+    }));
+  }, []);
+
+  const updateRefinement = useCallback((refId: string, value: boolean) => {
+    setState((s) => ({
+      ...s,
+      refinements: {
+        ...s.refinements,
+        [refId]: value
+      }
+    }));
+  }, []);
+
+  const startGame = useCallback(() => {
+    setState({ ...initialState, phase: 'playing' });
+  }, []);
+
+  const finishGame = useCallback(() => {
+    setState((s) => ({ ...s, phase: 'finished' }));
+  }, []);
+
+  const restartGame = useCallback(() => {
+    setState(initialState);
   }, []);
 
   const value = useMemo<GameContextValue>(
     () => ({
       ...state,
-      module: state.phase === 'title' || state.phase === 'intro' ? null : MODULES[state.moduleIndex] ?? null,
-      totalModules: MODULES.length,
-      maxProgress: MAX_PROGRESS,
-      completeIntroVideo,
-      completeIntro,
-      startAssessment,
-      advanceFromBriefing,
-      advanceFromReference,
-      completeChallenge,
-      advanceFromModuleComplete,
-      restartAssessment,
-      mission: state.phase === 'title' ? null : MODULES[state.moduleIndex] ?? null,
-      totalMissions: MODULES.length,
-      maxXp: MAX_PROGRESS,
-      startGame: startAssessment,
-      advanceFromMissionComplete: advanceFromModuleComplete,
-      restartGame: restartAssessment,
-      xp: state.progress,
-      streak: 0,
-      badges: state.competencies,
-      missionIndex: state.moduleIndex,
+      totalLevels: LEVELS.length,
+      addInsightPoints,
+      advanceLevel,
+      unlockBadge,
+      unlockGoodie,
+      updatePromptPieces,
+      updateValidationCheck,
+      updateRefinement,
+      startGame,
+      finishGame,
+      restartGame,
     }),
     [
       state,
-      completeIntroVideo,
-      completeIntro,
-      startAssessment,
-      advanceFromBriefing,
-      advanceFromReference,
-      completeChallenge,
-      advanceFromModuleComplete,
-      restartAssessment,
+      addInsightPoints,
+      advanceLevel,
+      unlockBadge,
+      unlockGoodie,
+      updatePromptPieces,
+      updateValidationCheck,
+      updateRefinement,
+      startGame,
+      finishGame,
+      restartGame,
     ],
   );
 

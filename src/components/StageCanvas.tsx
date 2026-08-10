@@ -23,16 +23,16 @@ export function StageCanvas({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <div className="stage-shell">
+    <div className="w-screen h-screen flex items-center justify-center overflow-hidden bg-[#000]">
       <div
-        className="stage-canvas"
+        className="relative origin-center bg-transparent"
         style={{
           width: SLIDE_WIDTH,
           height: SLIDE_HEIGHT,
           transform: `scale(${scale})`,
         }}
       >
-        <div className="stage-content">{children}</div>
+        <div className="absolute inset-0 w-full h-full text-left">{children}</div>
       </div>
     </div>
   );

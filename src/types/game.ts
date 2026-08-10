@@ -1,127 +1,56 @@
-export type GamePhase =
-  | 'intro'
-  | 'intro-video'
-  | 'title'
-  | 'briefing'
-  | 'reference'
-  | 'challenge'
-  | 'module-complete'
-  | 'summary';
+export type GamePhase = 'intro' | 'playing' | 'finished';
 
-export type ChallengeType = 'pick-one' | 'multi-select' | 'prompt-build' | 'spot-missing';
+export type Rank = 'Trainee Analyst' | 'Research Analyst' | 'Senior Analyst' | 'Lead Analyst' | 'Principal Analyst' | 'Trusted Advisor';
 
-export interface Competency {
+export interface Badge {
   id: string;
   name: string;
-  code: string;
   description: string;
+  icon: string; // Could be an emoji or Lucide icon name
 }
 
-export interface ProfileReference {
-  image: string;
-  title: string;
-  label: string;
-  caption: string;
-  callouts: string[];
-  variant: 'basic' | 'improved';
-}
-
-export interface Module {
-  id: number;
-  title: string;
-  subtitle: string;
-  briefing: string;
-  tip: string;
-  progressWeight: number;
-  competency?: Competency;
-  reference?: ProfileReference;
-}
-
-export interface PickOneChallenge {
-  type: 'pick-one';
-  question: string;
-  options: { id: string; text: string; correct: boolean; feedback: string }[];
-  points: number;
-}
-
-export interface MultiSelectChallenge {
-  type: 'multi-select';
-  question: string;
-  instruction: string;
-  options: { id: string; text: string; correct: boolean }[];
-  requiredCount: number;
-  points: number;
-}
-
-export interface PromptBuildChallenge {
-  type: 'prompt-build';
-  question: string;
-  instruction: string;
-  pieces: { id: string; text: string; order: number }[];
-  points: number;
-}
-
-export interface SpotMissingChallenge {
-  type: 'spot-missing';
-  question: string;
-  sampleLabel: string;
-  sampleText: string;
-  options: { id: string; text: string; correct: boolean }[];
-  requiredCount: number;
-  points: number;
-}
-
-export type Challenge =
-  | PickOneChallenge
-  | MultiSelectChallenge
-  | PromptBuildChallenge
-  | SpotMissingChallenge;
-
-/** Minimum points required to clear the level challenge. */
-export function getPassScore(challenge: Challenge): number {
-  if (challenge.type === 'pick-one') {
-    return challenge.points;
-  }
-  return Math.ceil(challenge.points * 0.6);
-}
-
-export function isAllOrNothingChallenge(challenge: Challenge): boolean {
-  return challenge.type === 'pick-one';
-}
-
-/** Score multi-select: each correct earns a share; wrong picks deduct half a share. */
-export function scoreMultiSelect(
-  challenge: MultiSelectChallenge,
-  selected: Iterable<string>,
-): number {
-  const selectedIds = [...selected];
-  const correctIds = challenge.options.filter((o) => o.correct).map((o) => o.id);
-  const correctSelected = correctIds.filter((id) => selectedIds.includes(id)).length;
-  const wrongSelected = selectedIds.filter((id) => !correctIds.includes(id)).length;
-  const share = challenge.points / challenge.requiredCount;
-  return Math.max(0, Math.round(correctSelected * share - wrongSelected * share * 0.5));
+export interface Goodie {
+  id: string;
+  name: string;
+  description: string;
+  content: string; // The text or template
 }
 
 export interface GameState {
   phase: GamePhase;
-  moduleIndex: number;
-  score: number;
-  progress: number;
-  competencies: Competency[];
-  challengeComplete: boolean;
+  currentLevel: number; // 0 to 5
+  insightPoints: number;
+  badges: string[]; // array of Badge IDs
+  unlockedGoodies: string[]; // array of Goodie IDs
+  
+  // Prompt builder state
+  promptPieces: {
+    purpose: string[];
+    scope: string[];
+    evidence: string[];
+  };
+  
+  // Validation state (Level 4)
+  validationChecks: Record<string, boolean>;
+
+  // Refinement state (Level 5)
+  refinements: Record<string, boolean>;
 }
 
-export type ProficiencyLevel = 'Developing' | 'Proficient' | 'Advanced' | 'Expert';
-
-export function getProficiencyLevel(score: number): ProficiencyLevel {
-  if (score >= 900) return 'Expert';
-  if (score >= 650) return 'Advanced';
-  if (score >= 350) return 'Proficient';
-  return 'Developing';
+export interface LevelConfig {
+  id: number;
+  title: string;
+  intent: string;
+  briefing: string;
+  badgeUnlock?: string;
+  goodieUnlock?: string;
 }
 
-/* Legacy aliases for gradual migration */
-export type Badge = Competency;
-export type Mission = Module;
-export type Rank = ProficiencyLevel;
-export const getRank = getProficiencyLevel;
+export function getRank(currentLevel: number, phase: GamePhase): Rank {
+  if (phase === 'finished') return 'Trusted Advisor';
+  if (currentLevel >= 5) return 'Principal Analyst'; // Completed L4
+  if (currentLevel >= 4) return 'Lead Analyst';      // Completed L3
+  if (currentLevel >= 3) return 'Senior Analyst';    // Completed L2
+  if (currentLevel >= 2) return 'Research Analyst';  // Completed L1
+  return 'Trainee Analyst';                          // Start
+}

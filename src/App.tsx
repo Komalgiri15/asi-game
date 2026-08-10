@@ -1,52 +1,58 @@
 import { GameProvider, useGame } from './context/GameContext';
-import { VoiceoverProvider } from './context/VoiceoverContext';
-import { IntroScreen } from './screens/IntroScreen';
-import { BriefingScreen } from './screens/BriefingScreen';
-import { ChallengeScreen } from './screens/ChallengeScreen';
-import { ModuleCompleteScreen } from './screens/ModuleCompleteScreen';
-import { ReferenceScreen } from './screens/ReferenceScreen';
-import { SummaryScreen } from './screens/SummaryScreen';
-import { LevelHubScreen } from './screens/LevelHubScreen';
-import { IntroVideoScreen } from './screens/IntroVideoScreen';
+import { AppFrame } from './components/AppFrame';
+import { StageCanvas } from './components/StageCanvas';
+
+import { IntroScreen } from './screens/levels/IntroScreen';
+import { Level0GenericPrompt } from './screens/levels/Level0GenericPrompt';
+import { Level1Purpose } from './screens/levels/Level1Purpose';
+import { Level2Scope } from './screens/levels/Level2Scope';
+import { Level3Evidence } from './screens/levels/Level3Evidence';
+import { Level4Validate } from './screens/levels/Level4Validate';
+import { Level5Expertise } from './screens/levels/Level5Expertise';
+import { GameFinish } from './screens/levels/GameFinish';
 
 function AppRouter() {
-  const { phase, completeIntro } = useGame();
+  const { phase, currentLevel } = useGame();
 
-  switch (phase) {
-    case 'intro-video':
-      return <IntroVideoScreen />;
-    case 'intro':
-      return <IntroScreen onComplete={completeIntro} />;
-    case 'title':
-      return <LevelHubScreen />;
-    case 'briefing':
-      return <BriefingScreen />;
-    case 'reference':
-      return <ReferenceScreen />;
-    case 'challenge':
-      return <ChallengeScreen />;
-    case 'module-complete':
-      return <ModuleCompleteScreen />;
-    case 'summary':
-      return <SummaryScreen />;
-    default:
-      return <LevelHubScreen />;
+  if (phase === 'intro') {
+    return (
+      <AppFrame>
+        <IntroScreen />
+      </AppFrame>
+    );
   }
-}
 
-import { AnimatePresence } from 'framer-motion';
-import { StageCanvas } from './components/StageCanvas';
+  if (phase === 'finished') {
+    return (
+      <AppFrame>
+        <GameFinish />
+      </AppFrame>
+    );
+  }
+
+  // Phase is 'playing'
+  const LevelComponent = [
+    Level0GenericPrompt,
+    Level1Purpose,
+    Level2Scope,
+    Level3Evidence,
+    Level4Validate,
+    Level5Expertise
+  ][currentLevel] || Level0GenericPrompt;
+
+  return (
+    <AppFrame>
+      <LevelComponent />
+    </AppFrame>
+  );
+}
 
 export default function App() {
   return (
     <StageCanvas>
-      <VoiceoverProvider>
-        <GameProvider>
-          <AnimatePresence mode="wait">
-            <AppRouter />
-          </AnimatePresence>
-        </GameProvider>
-      </VoiceoverProvider>
+      <GameProvider>
+        <AppRouter />
+      </GameProvider>
     </StageCanvas>
   );
 }
